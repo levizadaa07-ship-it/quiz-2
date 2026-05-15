@@ -8,22 +8,26 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 
     <style>
         :root {
-            --primary-yellow: #FFB800;
-            --primary-blue: #29B6F6;
-            --primary-green: #76D200;
-            --gray-light: #EBEBEB;
-            --text-dark: #1A1A1A;
+            --primary-green: #2E7D32;
+            --secondary-green: #43A047;
+            --light-green: #E8F5E9;
+            --forest-green: #1B5E20;
+            --earth-brown: #8D6E63;
+            --leaf-yellow: #C0CA33;
+            --gray-light: #DDE5D8;
+            --text-dark: #1B1B1B;
         }
 
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: #fff;
+            background: linear-gradient(180deg, #F1F8E9 0%, #E8F5E9 100%);
             display: flex;
             justify-content: center;
         }
@@ -52,7 +56,7 @@
         }
 
         .step.active {
-            background-color: var(--primary-blue);
+            background-color: var(--secondary-green);
         }
 
         .question-text {
@@ -62,6 +66,7 @@
             margin-bottom: 40px;
             line-height: 1.2;
             min-height: 60px;
+            color: var(--forest-green);
         }
 
         .options-list {
@@ -76,7 +81,7 @@
             padding: 16px 24px;
             border: 2px solid var(--gray-light);
             border-radius: 16px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
             cursor: pointer;
@@ -85,13 +90,19 @@
             max-width: 300px;
             text-align: center;
             font-size: 17px;
-            color: #555;
+            color: #3E4A3F;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            border-color: var(--secondary-green);
+            background: var(--light-green);
         }
 
         .option.selected {
-            border-color: var(--primary-blue);
-            background-color: #f0faff;
-            color: var(--text-dark);
+            border-color: var(--secondary-green);
+            background-color: var(--light-green);
+            color: var(--forest-green);
         }
 
         #final-result-screen {
@@ -114,6 +125,7 @@
             border-radius: 20px;
             overflow: hidden;
             border: 2px solid transparent;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
         .stat-header {
@@ -136,30 +148,30 @@
         }
 
         .card-green {
-            background: var(--primary-green);
-            border-color: var(--primary-green);
+            background: var(--secondary-green);
+            border-color: var(--secondary-green);
         }
 
         .card-blue {
-            background: var(--primary-blue);
-            border-color: var(--primary-blue);
+            background: var(--forest-green);
+            border-color: var(--forest-green);
         }
 
         .card-yellow {
-            background: var(--primary-yellow);
-            border-color: var(--primary-yellow);
+            background: var(--leaf-yellow);
+            border-color: var(--leaf-yellow);
         }
 
         .green-text {
-            color: var(--primary-green);
+            color: var(--secondary-green);
         }
 
         .blue-text {
-            color: var(--primary-blue);
+            color: var(--forest-green);
         }
 
         .yellow-text {
-            color: var(--primary-yellow);
+            color: #7B8D00;
         }
 
         .btn-action {
@@ -173,16 +185,22 @@
             text-transform: uppercase;
             cursor: pointer;
             margin-top: 40px;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.02);
         }
 
         .btn-check {
-            background-color: var(--gray-light);
-            color: #999;
+            background-color: #CFD8CC;
+            color: #6B6B6B;
         }
 
         .btn-check.ready {
-            background-color: var(--primary-blue);
+            background: linear-gradient(135deg, #43A047, #2E7D32);
             color: white;
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
         }
 
         @keyframes popIn {
@@ -205,8 +223,8 @@
 
         <div id="quiz-screen" style="display: flex; flex-direction: column; flex-grow: 1;">
 
-            <div style="text-align: center; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; font-size: 14px; color: #aaa;">
-                QUIZ
+            <div style="text-align: center; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; font-size: 14px; color: #4E6B50;">
+                QUIZ AMBIENTAL 🌿
             </div>
 
             <div class="progress-bar" id="progress-bar"></div>
@@ -225,8 +243,8 @@
 
         <div id="final-result-screen">
 
-            <h1 style="color: var(--primary-blue); font-size: 34px; font-weight: 800; margin-top: 60px;">
-                Fim do Quiz!
+            <h1 style="color: var(--forest-green); font-size: 34px; font-weight: 800; margin-top: 60px;">
+                🌱 Fim do Quiz!
             </h1>
 
             <div class="stats-grid">
@@ -258,7 +276,7 @@
             <button class="btn-action btn-check ready"
                 style="margin-top: 80px;"
                 onclick="location.reload()">
-                Refazer Quiz
+                ♻️ Refazer Quiz
             </button>
 
         </div>
@@ -268,11 +286,12 @@
     <script>
 
         // --- CONFIGURAÇÃO DE SONS ---
+
         const audioAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+
         const audioErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3');
 
         // --- TABELA DE PERGUNTAS ---
-        // A PRIMEIRA OPÇÃO É A CORRETA
 
         const bancoDeDados = [
 
@@ -349,9 +368,13 @@
         ];
 
         let perguntasSorteadas = [];
+
         let currentQ = 0;
+
         let totalXP = 0;
+
         let acertos = 0;
+
         let startTime = Date.now();
 
         // --- TODAS AS PERGUNTAS VALEM 10 XP ---
@@ -361,6 +384,7 @@
         // --- EMBARALHAR ARRAY ---
 
         function shuffle(array) {
+
             for (let i = array.length - 1; i > 0; i--) {
 
                 const j = Math.floor(Math.random() * (i + 1));
