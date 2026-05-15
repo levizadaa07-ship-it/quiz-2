@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarney PJS 2026 | Educação e Conscientização Ambiental</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-yellow: #FFB800;
+            --primary-blue: #29B6F6;
+            --primary-green: #76D200;
+            --gray-light: #EBEBEB;
+            --text-dark: #1A1A1A;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-interface {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 24px;
+            box-sizing: border-box;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            flex: 1;
+            height: 6px;
+            background-color: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .step.active {
+            background-color: var(--primary-blue);
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.2;
+            min-height: 60px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .option {
+            padding: 16px 24px;
+            border: 2px solid var(--gray-light);
+            border-radius: 16px;
+            background: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            font-size: 17px;
+            color: #555;
+        }
+
+        .option.selected {
+            border-color: var(--primary-blue);
+            background-color: #f0faff;
+            color: var(--text-dark);
+        }
+
+        #final-result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .stat-card {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .stat-header {
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 8px 0;
+            text-transform: uppercase;
+        }
+
+        .stat-body {
+            background: white;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card-green {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .card-blue {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .card-yellow {
+            background: var(--primary-yellow);
+            border-color: var(--primary-yellow);
+        }
+
+        .green-text {
+            color: var(--primary-green);
+        }
+
+        .blue-text {
+            color: var(--primary-blue);
+        }
+
+        .yellow-text {
+            color: var(--primary-yellow);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 20px;
+            border-radius: 18px;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 40px;
+        }
+
+        .btn-check {
+            background-color: var(--gray-light);
+            color: #999;
+        }
+
+        .btn-check.ready {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="app-interface">
+
+        <div id="quiz-screen" style="display: flex; flex-direction: column; flex-grow: 1;">
+
+            <div style="text-align: center; font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; font-size: 14px; color: #aaa;">
+                QUIZ
+            </div>
+
+            <div class="progress-bar" id="progress-bar"></div>
+
+            <h1 class="question-text" id="question-title">
+                Carregando...
+            </h1>
+
+            <div class="options-list" id="options-container"></div>
+
+            <button class="btn-action btn-check" id="submit-btn" disabled>
+                Confirmar Resposta
+            </button>
+
+        </div>
+
+        <div id="final-result-screen">
+
+            <h1 style="color: var(--primary-blue); font-size: 34px; font-weight: 800; margin-top: 60px;">
+                Fim do Quiz!
+            </h1>
+
+            <div class="stats-grid">
+
+                <div class="stat-card card-green">
+                    <div class="stat-header">Acertos</div>
+                    <div class="stat-body green-text">
+                        🎯 <span id="res-acertos">0%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-blue">
+                    <div class="stat-header">Tempo</div>
+                    <div class="stat-body blue-text">
+                        ⏱️ <span id="res-tempo">0:00</span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-yellow"
+                    style="grid-column: span 2; width: 60%; justify-self: center;">
+                    <div class="stat-header">Total XP</div>
+                    <div class="stat-body yellow-text">
+                        ⚡ <span id="res-xp-total">0</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="btn-action btn-check ready"
+                style="margin-top: 80px;"
+                onclick="location.reload()">
+                Refazer Quiz
+            </button>
+
+        </div>
+
+    </main>
+
+    <script>
+
+        // --- CONFIGURAÇÃO DE SONS ---
+        const audioAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        const audioErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3');
+
+        // --- TABELA DE PERGUNTAS ---
+        // A PRIMEIRA OPÇÃO É A CORRETA
+
+        const bancoDeDados = [
+
+            {
+                q: "QUAIS SÃO OS PRINCIPAIS IMPACTOS DA AÇÃO HUMANA SOBRE A NATUREZA?",
+                options: [
+                    "Poluição e desmatamento",
+                    "Chuvas e ventos",
+                    "Crescimento das árvores",
+                    "Formação de rios"
+                ]
+            },
+
+            {
+                q: "COMO O DESMATAMENTO AFETA O MEIO AMBIENTE?",
+                options: [
+                    "Destrói habitats naturais",
+                    "Melhora o ar",
+                    "Aumenta os rios",
+                    "Cria mais animais"
+                ]
+            },
+
+            {
+                q: "O QUE A POLUIÇÃO DOS RIOS PODE CAUSAR?",
+                options: [
+                    "Morte de seres aquáticos",
+                    "Aumento das florestas",
+                    "Água mais limpa",
+                    "Mais peixes"
+                ]
+            },
+
+            {
+                q: "QUAL ATITUDE AJUDA NA PRESERVAÇÃO DA NATUREZA?",
+                options: [
+                    "Reciclar materiais",
+                    "Jogar lixo no chão",
+                    "Desmatar florestas",
+                    "Poluir rios"
+                ]
+            },
+
+            {
+                q: "COMO AS QUEIMADAS PREJUDICAM O MEIO AMBIENTE?",
+                options: [
+                    "Aumentam a poluição do ar",
+                    "Deixam o ar mais puro",
+                    "Criam mais árvores",
+                    "Melhoram o clima"
+                ]
+            },
+
+            {
+                q: "O AQUECIMENTO GLOBAL É CAUSADO PRINCIPALMENTE POR:",
+                options: [
+                    "Poluição e gases poluentes",
+                    "Chuvas fortes",
+                    "Ondas do mar",
+                    "Plantas aquáticas"
+                ]
+            },
+
+            {
+                q: "O EXCESSO DE LIXO NA NATUREZA PODE PROVOCAR:",
+                options: [
+                    "Contaminação do solo",
+                    "Crescimento das florestas",
+                    "Água mais limpa",
+                    "Mais oxigênio"
+                ]
+            }
+
+        ];
+
+        let perguntasSorteadas = [];
+        let currentQ = 0;
+        let totalXP = 0;
+        let acertos = 0;
+        let startTime = Date.now();
+
+        // --- TODAS AS PERGUNTAS VALEM 10 XP ---
+
+        const xpPorPergunta = Array(bancoDeDados.length).fill(10);
+
+        // --- EMBARALHAR ARRAY ---
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+
+                const j = Math.floor(Math.random() * (i + 1));
+
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+
+            return array;
+        }
+
+        // --- INICIAR QUIZ ---
+
+        function initQuiz() {
+
+            perguntasSorteadas = shuffle([...bancoDeDados]).map(item => {
+
+                const correctAns = item.options[0];
+
+                return {
+                    q: item.q,
+                    correct: correctAns,
+                    options: shuffle([...item.options])
+                };
+
+            });
+
+            loadQuestion();
+        }
+
+        // --- CARREGAR PERGUNTA ---
+
+        function loadQuestion() {
+
+            const data = perguntasSorteadas[currentQ];
+
+            const btn = document.getElementById('submit-btn');
+
+            document.getElementById('question-title').innerText = data.q;
+
+            const container = document.getElementById('options-container');
+
+            container.innerHTML = '';
+
+            btn.classList.remove('ready');
+
+            btn.disabled = true;
+
+            btn.dataset.selectedText = '';
+
+            data.options.forEach((opt) => {
+
+                const b = document.createElement('button');
+
+                b.className = 'option';
+
+                b.innerText = opt;
+
+                b.onclick = () => {
+
+                    document.querySelectorAll('.option')
+                        .forEach(el => el.classList.remove('selected'));
+
+                    b.classList.add('selected');
+
+                    btn.classList.add('ready');
+
+                    btn.disabled = false;
+
+                    btn.dataset.selectedText = opt;
+                };
+
+                container.appendChild(b);
+            });
+
+            // --- BARRA DE PROGRESSO ---
+
+            const bar = document.getElementById('progress-bar');
+
+            bar.innerHTML = '';
+
+            perguntasSorteadas.forEach((_, i) => {
+
+                const s = document.createElement('div');
+
+                s.className = 'step' + (i <= currentQ ? ' active' : '');
+
+                bar.appendChild(s);
+            });
+        }
+
+        // --- CONFIRMAR RESPOSTA ---
+
+        document.getElementById('submit-btn').onclick = () => {
+
+            const selectedText =
+                document.getElementById('submit-btn').dataset.selectedText;
+
+            const isCorrect =
+                selectedText === perguntasSorteadas[currentQ].correct;
+
+            // --- SE ACERTOU ---
+
+            if (isCorrect) {
+
+                audioAcerto.currentTime = 0;
+
+                audioAcerto.play();
+
+                totalXP += xpPorPergunta[currentQ];
+
+                acertos++;
+
+            } else {
+
+                audioErro.currentTime = 0;
+
+                audioErro.play();
+            }
+
+            // --- PRÓXIMA PERGUNTA OU FINAL ---
+
+            if (currentQ < perguntasSorteadas.length - 1) {
+
+                currentQ++;
+
+                loadQuestion();
+
+            } else {
+
+                showFinalResults();
+            }
+        };
+
+        // --- RESULTADO FINAL ---
+
+        function showFinalResults() {
+
+            const totalSeconds =
+                Math.floor((Date.now() - startTime) / 1000);
+
+            const min = Math.floor(totalSeconds / 60);
+
+            const sec = totalSeconds % 60;
+
+            document.getElementById('quiz-screen').style.display = 'none';
+
+            document.getElementById('final-result-screen').style.display = 'flex';
+
+            document.getElementById('res-acertos').innerText =
+                Math.round((acertos / perguntasSorteadas.length) * 100) + '%';
+
+            document.getElementById('res-tempo').innerText =
+                `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+            document.getElementById('res-xp-total').innerText = totalXP;
+        }
+
+        // --- INICIAR ---
+
+        initQuiz();
+
+    </script>
+
+</body>
+
+</html>
